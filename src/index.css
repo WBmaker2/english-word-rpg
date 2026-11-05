@@ -1,0 +1,35 @@
+:root {
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --accent: #f59e0b;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --good: #22c55e;
+  --bad: #ef4444;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); }
+.app { max-width: 960px; margin: 0 auto; padding: 16px; }
+.nav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.nav button { background: var(--panel); color: var(--text); border: 1px solid #334155; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+.nav button.active { background: var(--accent); color: #000; }
+.card { background: var(--panel); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+.btn { background: var(--accent); color: #000; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-secondary { background: #334155; color: var(--text); }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.input { background: #0f172a; color: var(--text); border: 1px solid #334155; padding: 8px; border-radius: 8px; width: 100%; }
+.stat { font-size: 24px; font-weight: 700; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.word-item { background: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid #334155; }
+.hpbar { height: 12px; background: #334155; border-radius: 6px; overflow: hidden; }
+.hpfill { height: 100%; background: var(--bad); transition: width .3s; }
+.xpfill { height: 100%; background: var(--accent); transition: width .3s; }
+.option { display: block; width: 100%; text-align: left; background: #0f172a; color: var(--text); border: 1px solid #334155; padding: 10px; border-radius: 8px; margin: 6px 0; cursor: pointer; }
+.option:hover { border-color: var(--accent); }
+.correct { border-color: var(--good) !important; background: #052e16; }
+.wrong { border-color: var(--bad) !important; background: #450a0a; }
+@media (max-width: 600px) { .stat { font-size: 20px; } }
+.btn-pulse { animation: pulse 1.6s infinite; }
+@keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(245,158,11,.6)} 70%{box-shadow:0 0 0 10px rgba(245,158,11,0)} 100%{box-shadow:0 0 0 0 rgba(245,158,11,0)} }
+@media (prefers-reduced-motion: reduce) { .btn-pulse { animation: none; } }
