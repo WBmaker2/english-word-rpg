@@ -147,7 +147,15 @@ export default function Battle({ onEnd }: { onEnd: () => void }) {
   }, [finished]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!loaded) return <div className="card">로딩...</div>;
-  if (qs.length === 0) return <div className="card">단어가 없습니다. 단어장을 먼저 채워주세요. <button className="btn" onClick={onEnd}>돌아가기</button></div>;
+  if (qs.length === 0) return (
+    <div className="card">
+      <div className="empty-state">
+        <h3>단어가 없습니다</h3>
+        <p>단어장을 먼저 채워주세요.</p>
+        <button className="btn" onClick={onEnd}>돌아가기</button>
+      </div>
+    </div>
+  );
 
   if (finished) {
     const victory = playerHp > 0;
@@ -165,12 +173,12 @@ export default function Battle({ onEnd }: { onEnd: () => void }) {
       <div className="row">
         <div style={{ flex: 1 }}>
           <div>플레이어 HP</div>
-          <div className="hpbar"><div className="hpfill" style={{ width: `${(playerHp / char.maxHp) * 100}%` }} /></div>
+          <div className="hpbar" role="progressbar" aria-valuenow={playerHp} aria-valuemin={0} aria-valuemax={char.maxHp} aria-label="플레이어 체력"><div className="hpfill" style={{ width: `${(playerHp / char.maxHp) * 100}%` }} /></div>
           <div>{playerHp}/{char.maxHp}</div>
         </div>
         <div style={{ flex: 1 }}>
           <div>적 HP</div>
-          <div className="hpbar"><div className="hpfill" style={{ width: `${(enemyHp / enemyMax) * 100}%`, background: "#a855f7" }} /></div>
+          <div className="hpbar" role="progressbar" aria-valuenow={enemyHp} aria-valuemin={0} aria-valuemax={enemyMax} aria-label="적 체력"><div className="hpfill" style={{ width: `${(enemyHp / enemyMax) * 100}%`, background: "#a855f7" }} /></div>
           <div>{enemyHp}/{enemyMax}</div>
         </div>
       </div>
