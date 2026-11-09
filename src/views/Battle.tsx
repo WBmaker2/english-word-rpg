@@ -15,22 +15,25 @@ interface Q {
   options?: string[];
   answer: string;
   prompt: string;
+  hint?: string;
 }
 
 function buildQuestions(pairs: { word: Word; card: CardState }[], allWords: Word[]): Q[] {
   const qs: Q[] = [];
   for (const p of pairs) {
     const kind = (["meaning", "spelling", "listening", "blank"] as const)[Math.floor(Math.random() * 4)];
-    if (kind === "meaning" || kind === "listening") {
+    if (kind === "meaning") {
       const distractors = allWords.filter((w) => w.id !== p.word.id).sort(() => Math.random() - 0.5).slice(0, 3).map((w) => w.meaning);
       const options = [...distractors, p.word.meaning].sort(() => Math.random() - 0.5);
       qs.push({ word: p.word, card: p.card, kind, options, answer: p.word.meaning, prompt: p.word.term });
+    } else if (kind === "listening") {
+      qs.push({ word: p.word, card: p.card, kind, answer: p.word.term.toLowerCase(), prompt: "듣고 영어 단어를 쓰세요", hint: p.word.meaning });
     } else if (kind === "spelling") {
       qs.push({ word: p.word, card: p.card, kind, answer: p.word.term.toLowerCase(), prompt: p.word.meaning });
     } else {
       const ex = p.word.example || `I like ${p.word.term}.`;
       const blanked = ex.replace(new RegExp(p.word.term, "i"), "____");
-      qs.push({ word: p.word, card: p.card, kind, answer: p.word.term.toLowerCase(), prompt: blanked });
+      qs.push({ word: p.word, card: p.card, kind, answer: p.word.term.toLowerCase(), prompt: blanked, hint: p.word.meaning });
     }
   }
   return qs;
@@ -199,11 +202,15 @@ export default function Battle({ onEnd }: { onEnd: () => void }) {
         <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
           <div className="card" style={{ marginTop: 12 }}>
             <div style={{ fontSize: 18, marginBottom: 8 }}>
-              {current.kind === "listening" && "🔊 듣고 뜻을 고르세요"}
+              {current.kind === "listening" && "🔊 듣고 영어 단어를 쓰세요"}
               {current.kind === "meaning" && `"${current.prompt}" 의 뜻은?`}
               {current.kind === "spelling" && `뜻: ${current.prompt} → 스펠링?`}
               {current.kind === "blank" && `빈칸: ${current.prompt}`}
             </div>
+            {current.hint && <div style={{ color: "var(--muted)", marginBottom: 8 }}>힌트: {current.hint}</div>}
+            {current.kind === "listening" && (
+              <button className="btn btn-secondary" style={{ marginBottom: 8 }} onClick={() => speakTerm(current.word.term)}>다시 듣기</button>
+            )}
             {current.options && (
               <div>
                 {current.options.map((o) => (
