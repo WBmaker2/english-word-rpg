@@ -5,6 +5,7 @@ import { review } from "../lib/srs";
 import { useCharacter } from "../store/character";
 import { attackBonus } from "../store/character";
 import { SKILLS } from "../lib/skills";
+import { EXAMPLE_KO } from "../lib/exampleTranslations";
 import { speakTerm } from "../lib/tts";
 import type { Word, CardState } from "../types";
 
@@ -33,7 +34,8 @@ function buildQuestions(pairs: { word: Word; card: CardState }[], allWords: Word
     } else {
       const ex = p.word.example || `I like ${p.word.term}.`;
       const blanked = ex.replace(new RegExp(p.word.term, "i"), "____");
-      qs.push({ word: p.word, card: p.card, kind, answer: p.word.term.toLowerCase(), prompt: blanked, hint: p.word.meaning });
+      const ko = EXAMPLE_KO[ex] || "";
+      qs.push({ word: p.word, card: p.card, kind, answer: p.word.term.toLowerCase(), prompt: blanked, hint: (ko ? ko + " " : "") + "(뜻: " + p.word.meaning + ")" });
     }
   }
   return qs;
@@ -207,7 +209,7 @@ export default function Battle({ onEnd }: { onEnd: () => void }) {
               {current.kind === "spelling" && `뜻: ${current.prompt} → 스펠링?`}
               {current.kind === "blank" && `빈칸: ${current.prompt}`}
             </div>
-            {current.hint && <div style={{ color: "var(--muted)", marginBottom: 8 }}>힌트: {current.hint}</div>}
+            {current.hint && <div style={{ color: "var(--muted)", marginBottom: 8 }}>한글 힌트: {current.hint}</div>}
             {current.kind === "listening" && (
               <button className="btn btn-secondary" style={{ marginBottom: 8 }} onClick={() => speakTerm(current.word.term)}>다시 듣기</button>
             )}
