@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getDueCards, saveCard, logBattle, listWords } from "../lib/words";
 import { review } from "../lib/srs";
@@ -50,6 +50,7 @@ export default function Battle({ onEnd }: { onEnd: () => void }) {
   const [qs, setQs] = useState<Q[]>([]);
   const [idx, setIdx] = useState(0);
   const [input, setInput] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [playerHp, setPlayerHp] = useState(char.hp);
@@ -90,6 +91,12 @@ export default function Battle({ onEnd }: { onEnd: () => void }) {
   }, [idx, qs]);
 
   const current = qs[idx];
+
+  useEffect(() => {
+    if (!current || current.options) return;
+    const t = setTimeout(() => inputRef.current?.focus(), 50);
+    return () => clearTimeout(t);
+  }, [idx, current]);
 
   const activateSkill = (id: string) => {
     if (usedSkills.includes(id)) return;
@@ -229,7 +236,7 @@ export default function Battle({ onEnd }: { onEnd: () => void }) {
             )}
             {!current.options && (
               <div>
-                <input className="input" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submitAnswer(input)} disabled={!!feedback} />
+                <input ref={inputRef} className="input" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submitAnswer(input)} disabled={!!feedback} autoFocus />
                 <button className="btn" style={{ marginTop: 6 }} onClick={() => submitAnswer(input)} disabled={!!feedback}>제출</button>
               </div>
             )}
